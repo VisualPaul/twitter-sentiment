@@ -1,4 +1,5 @@
 # -*- mode: gitignore; -*-
+api_keys.py
 # vim temporary files
 [._]*.s[a-w][a-z]
 [._]s[a-w][a-z]
