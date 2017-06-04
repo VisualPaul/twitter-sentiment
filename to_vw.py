@@ -43,6 +43,30 @@ df = Counter()
 date_re = re.compile(r'(?P<week_day>\w{3}) (?P<month>\w{3}) (?P<day>\d\d) (?P<hour>\d\d):(?P<minute>\d\d):(?P<second>\d\d) (?P<tz>\w{3}) (?P<year>\d{4})')
 replace_pattern = re.compile(r'@\w*|[0-9]+|[a-zA-Z0-9\.\+_]+@[a-zA-Z0-9\._]+|(https?://)?[\w\d]+\.[\w\d\.]+/\S+|[:;][\-\=]*D|[xX]+D|[^a-zA-Z0-9\s@]')
 tweets = 0
+if args.progress:
+    def report_progress(iterable, total=None, period=1000):
+        start_time = time.time()
+        nsecs = 1
+        i = -1
+        for i, result in enumerate(iterable):
+            if i % period == 0:
+                current_time = time.time()
+                if current_time >= start_time + nsecs:
+                    nsecs += 1
+                    if total is None:
+                        print '\rProcessed: {:8,d} in {:4d} seconds'.format(i, int(round(current_time - start_time))),
+                    else:
+                        elapsed = current_time - start_time
+                        eta = elapsed / float(max(1, i)) * total
+                        print '\rProcessed: {:8,d} of {:8,d} in {:4d} seconds (ETA: {})'.format(
+                            i, total, int(round(elapsed)), int(round(eta - elapsed))),
+            yield result
+        if nsecs != 1:
+            print
+        print 'Completed {:8,d} in {:.2f} seconds'.format(i + 1, time.time() - start_time)
+else:
+    def report_progress(iterable, *args, **kwargs):
+        return iterable
 
 class Vectorizer(object):
     def __init__(self):
@@ -75,7 +99,7 @@ class GloveVectorizer(Vectorizer):
     def finalize_fit(self):
         self.words_dict = {}
         with open('glove.twitter.27B.200d.txt') as f:
-            for line in f:
+            for line in report_progress(f):
                 text = line.decode('utf-8').split()
                 if len(text) != 201:
                     continue
@@ -119,29 +143,11 @@ def tweet_to_words(tweet):
     return [x for x in re.split(r'[^\w<>]', tweet_replace(tweet).lower()) if x != '']
 
 def csv_rows(f, row_num=None):
-    iters = 0
-    start_time = time.time()
-    nsecs = 1
     f.seek(0)
-    for pol, id, date, lyx, user, tweet in csv.reader(f):
+    for pol, id, date, lyx, user, tweet in report_progress(csv.reader(f), total=row_num):
         if pol == '2':
             continue
         yield pol, id, date, lyx, user, tweet
-        iters += 1
-        if iters % 1000 == 0 and args.progress:
-            current_time = time.time()
-            if current_time < start_time + nsecs:
-                continue
-            nsecs += 1
-            if row_num is None:
-                print '\rProcessed: {:8,d} in {:4d} seconds'.format(iters, int(round(current_time - start_time))),
-            else:
-                eta = (current_time - start_time) / float(iters) * row_num
-                print '\rProcessed: {:8,d} of {:8,d} in {:4d} seconds (ETA: {})'.format(
-                    iters, row_num, int(round(current_time - start_time)), int(round(eta - current_time + start_time))),
-            sys.stdout.flush()
-    if nsecs != 1:
-        print
 
 if args.progress:
     print 'Train pass [1/2]:'
