@@ -3,6 +3,10 @@ api_keys.py
 *.vw
 *.cache
 *.csv
+model
+pred.txt
+*.zip
+glove.twitter.27B.200d.txt
 # vim temporary files
 [._]*.s[a-w][a-z]
 [._]s[a-w][a-z]
