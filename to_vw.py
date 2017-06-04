@@ -99,6 +99,8 @@ class TfIdfVectorizer(Vectorizer):
 class GloveVectorizer(Vectorizer):
     def finalize_fit(self):
         self.words_dict = {}
+        if args.progress:
+            print 'Loading GloVe'
         with open('glove.twitter.27B.200d.txt') as f:
             for line in report_progress(f):
                 text = line.decode('utf-8').split()
@@ -108,8 +110,7 @@ class GloveVectorizer(Vectorizer):
                                                      dtype='float32')
     def vectorize(self, tweet):
         vector = np.mean([self.words_dict[word] for word in tweet], axis=0)
-        assert len(vector) == 200
-        return {'_' + x: vector[x] for x in xrange(200)}
+        return {'_' + str(x): vector[x] for x in xrange(200)}
 
 
 if args.vectorizer == 'tfidf':
