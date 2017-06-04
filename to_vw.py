@@ -60,6 +60,7 @@ if args.progress:
                         eta = elapsed / float(max(1, i)) * total
                         print '\rProcessed: {:8,d} of {:8,d} in {:4d} seconds (ETA: {})'.format(
                             i, total, int(round(elapsed)), int(round(eta - elapsed))),
+                    sys.stdout.flush()
             yield result
         if nsecs != 1:
             print
