@@ -109,7 +109,7 @@ class GloveVectorizer(Vectorizer):
                 self.words_dict[text[0]] = np.array([float(x) for x in text[1:]],
                                                      dtype='float32')
     def vectorize(self, tweet):
-        vector = np.mean([self.words_dict[word] for word in tweet], axis=0)
+        vector = np.mean([self.words_dict[word] for word in tweet if wod in self.words_dict], axis=0)
         return {'_' + str(x): vector[x] for x in xrange(200)}
 
 
