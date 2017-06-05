@@ -94,6 +94,7 @@ class TfIdfVectorizer(Vectorizer):
                 for word in tf
                 if (word not in stops and self.df[word] < 4 )] # I am (still) a Lisp programmer
 
+
 class GloveVectorizer(Vectorizer):
     def __init__(self, tweets):
         self.words_dict = {}
@@ -177,7 +178,7 @@ class TweetsCsv(object):
                 if pol == '2':
                     continue
                 pol = pol == '4'
-                date = parse_date(date)
+                date = parse_date(date, ignoretz=True)
                 tweet = tweet_to_words(tweet)
                 yield pol, id, date, lyx, user, tweet
             self.n_tweets = tweets
