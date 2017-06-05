@@ -207,7 +207,7 @@ class TweetsCsv(object):
                             '.hour_' + str(date.hour)] + vectorizer.get_features(tweet)
                 lbl = 1 if pol else -1
 
-                yield '{lbl} {tag}|x {features}'.format(
+                yield '{lbl} {tag}|a {features}'.format(
                     lbl=(1 if pol else -1), tag=id,
                     features=(' '.join(features)))
         return generator_to_iterable(gen)   
