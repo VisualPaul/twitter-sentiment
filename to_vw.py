@@ -5,7 +5,7 @@ import numpy as np
 from gensim.models import Word2Vec
 from multiprocessing import cpu_count
 import random
-from dateutil.parser import parse as parse_date
+from datetime import datetime
 import re
 import time
 from collections import Counter
@@ -178,7 +178,16 @@ class TweetsCsv(object):
                 if pol == '2':
                     continue
                 pol = pol == '4'
-                date = parse_date(date, ignoretz=True)
+                date_match = re.match(date_re, date)
+                assert date_match is not None
+                date_string = '{} {} {} {}:{}:{}'.format(
+                    date_match.group('year'),
+                    date_match.group('month'),
+                    date_match.group('day'),
+                    date_match.group('hour'),
+                    date_match.group('minute'),
+                    date_match.group('second'))
+                date = datetime.strptime(date_string, '%Y %b %d %H:%M:%S')
                 tweet = tweet_to_words(tweet)
                 yield pol, id, date, lyx, user, tweet
             self.n_tweets = tweets
