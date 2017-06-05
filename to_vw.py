@@ -249,4 +249,4 @@ else:
     print_lines_to_file(lines, args.vw_file)
     del lines
 
-print_lines_to_file(test.vw_lines(user_tweets, user_positive, vec, pass_name='train conversion'), args.test_vw)
+print_lines_to_file(test.vw_lines(user_tweets, user_positive, vec, pass_name='test conversion'), args.test_vw)
