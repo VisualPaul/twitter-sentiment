@@ -1,0 +1,1 @@
+GloVe: 0.821727019499 (roc 0.890389271745) passes=10 no regularization
