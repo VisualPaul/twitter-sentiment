@@ -92,7 +92,7 @@ class TfIdfVectorizer(Vectorizer):
         tf = Counter(tweet)
         return ['{}:{}'.format(word, tf[word] * np.log(self.tweets_f / (self.df[word] + 1)))
                 for word in tf
-                if (word not in stops and self.df[word] < 4 )] # I am (still) a Lisp programmer
+                if word not in stops and self.df[word] > 4 ] # I am (still) a Lisp programmer
 
 
 class GloveVectorizer(Vectorizer):
