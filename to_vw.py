@@ -8,6 +8,7 @@ import random
 from datetime import datetime
 import re
 import time
+import glove
 from collections import Counter
 from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS
 
@@ -100,15 +101,9 @@ class GloveVectorizer(Vectorizer):
         self.words_dict = {}
         if args.progress:
             print 'Loading GloVe'
-        with open('glove.twitter.27B.200d.txt') as f:
-            for line in report_progress(f):
-                text = line.decode('utf-8').split()
-                if len(text) != 201:
-                    continue
-                self.words_dict[text[0]] = np.array([float(x) for x in text[1:]],
-                                                     dtype='float32')
+        self.word_matrix, self.word_num = glove.get_glove()
     def get_features(self, tweet):
-        vectors = [self.words_dict[word] for word in tweet if word in self.words_dict]
+        vectors = [self.word_matrix[self.word_num[word]] for word in tweet if word in self.word_num]
         vectors.append(np.zeros(200))
         vector = np.mean(vectors, axis=0)
         return ['_{}:{}'.format(x, vector[x]) for x in xrange(200)]

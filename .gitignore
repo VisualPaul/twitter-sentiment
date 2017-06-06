@@ -7,6 +7,8 @@ model_*
 pred.txt
 *.zip
 glove.twitter.27B.200d.txt
+glove.npz
+
 # vim temporary files
 [._]*.s[a-w][a-z]
 [._]s[a-w][a-z]
