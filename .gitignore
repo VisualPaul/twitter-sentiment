@@ -1,4 +1,5 @@
 # -*- mode: gitignore; -*-
+.DS_Store
 api_keys.py
 *.vw
 *.cache
