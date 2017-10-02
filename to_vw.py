@@ -135,7 +135,7 @@ tweet_replace = replace_function(
     r'#(\S+)', lambda x: ' <HASHTAG> ' + ' '.join(re.split(r'(?=[A-Z])', x.group(1))),
     r'<3', r'<HEART>',
     r'([!?.]){2,}', r' \1 <REPEAT> ',
-    r'\b(\S*?)(.)\2{2,}(\S*)\b', r' \1\2\3 <ELONG> ',
+    r'\b(\S*?)(.)\2{2,}\b', r' \1\2 <ELONG> ',
     r'\s([^a-z0-9()<>\'`\-]){2,}\s', lambda x: x.group(0).lower() + '<ALLCAPS> ')
 
 def tweet_to_words(tweet):
