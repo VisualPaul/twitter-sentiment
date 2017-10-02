@@ -12,8 +12,6 @@ import glove
 from collections import Counter
 from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS
 
-stops = ENGLISH_STOP_WORDS
-
 argument_parser = argparse.ArgumentParser(
     description='A small tool that converts csv to vw format')
 
@@ -34,12 +32,20 @@ argument_parser.add_argument('test_vw',
                              default=sys.stdout,
                              nargs='?')
 argument_parser.add_argument('--vectorizer', '-v' '--vectoriser',
-                             choices=['tfidf', 'glove', 'w2v'],
+                             choices=['tfidf', 'glove', 'w2v', 'naive'],
                              default='tfidf')
 argument_parser.add_argument('--write-immediately', '-i', action='store_true')
 argument_parser.add_argument('--progress', '-p', action='store_true')
+argument_parser.add_argument('--no-stops', '-s', action='store_false')
+
+
 
 args = argument_parser.parse_args()
+if args.no_stops:
+    stops = set()
+else:
+    stops = ENGLISH_STOP_WORDS
+    
 user_tweets = Counter()
 user_positive = Counter()
 date_re = re.compile(
@@ -115,6 +121,13 @@ class Word2VecVectorizer(Vectorizer):
         vectors = [self.w2v.wv[word] for word in tweet if word in self.w2v.wv] + [np.zeros(100)]
         vector = np.mean(vectors, axis=0)
         return ['_{}:{}'.format(x, vector[x]) for x in xrange(100)]
+
+class NaiveVectorizer(Vectorizer):
+    def __init__(self, tweets):
+        pass
+
+    def get_features(self, tweet):
+        return ['_' + word for word in tweet]
 
 def replace_function(*args):
     if len(args) % 2 != 0:
@@ -226,6 +239,8 @@ elif args.vectorizer == 'glove':
     vectorizer_class = GloveVectorizer
 elif args.vectorizer == 'w2v':
     vectorizer_class = Word2VecVectorizer
+elif args.vectorizer == 'naive':
+    vectorizer_class = NaiveVectorizer
 else:
     raise ValueError('incorrect vectorizer argument: ' + repr(args.vectorizer))
 
